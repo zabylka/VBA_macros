@@ -1,0 +1,63 @@
+@import url('https://fonts.googleapis.com/css2?family=Cascadia+Mono:wght@400;700&display=swap');
+
+/* overall page setup */
+body {
+  background: linear-gradient(135deg, #0d1117 0%, #161b22 50%, #21262d 100%);
+  color: #c9d1d9;
+  font-family: 'Cascadia Mono', 'Courier New', Courier, monospace;
+  padding: 2rem;
+}
+
+/* main header */
+h1 {
+  font-size: 2rem;
+  margin-bottom: 1rem;
+}
+
+/* macro card container */
+.macro-card {
+  background: #161b22;
+  padding: 1rem 1.5rem;
+  border-radius: 10px;
+  margin-bottom: 2rem;
+  border: 1px solid #30363d;
+}
+
+.macro-card h2 {
+  color: #58a6ff;
+  margin-top: 0;
+}
+
+/* box showing demo output */
+.demo-box {
+  background: rgba(13, 17, 23, 0.95);
+  border: 1px solid #30363d;
+  padding: 1rem;
+  border-radius: 6px;
+  white-space: pre-wrap;
+  font-family: 'Cascadia Mono', 'Courier New', Courier, monospace;
+  font-size: 15px;
+}
+
+/* macro run button */
+button {
+  margin-top: 0.5rem;
+  padding: 6px 12px;
+  background-color: #238636;
+  border: none;
+  border-radius: 5px;
+  color: white;
+  cursor: pointer;
+}
+
+button:hover {
+  background-color: #2ea043;
+}
+
+/* code toggle */
+details summary {
+  cursor: pointer;
+  color: #c9d1d9;
+  margin-top: 1rem;
+  font-family: 'Cascadia Mono', 'Courier New', Courier, monospace;
+}
