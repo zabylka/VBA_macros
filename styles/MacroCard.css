@@ -1,0 +1,92 @@
+.macro-card {
+  background: #23252b;
+  padding: 0.8rem 1.1rem;
+  border-radius: 7px;
+  border: 1px solid #2e3138;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  opacity: 0;
+  transform: translateY(10px);
+  transition: opacity 0.4s ease, transform 0.4s ease;
+  pointer-events: none;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.macro-card.show {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+
+.macro-card h2 {
+  color: #e3e6ea;
+  margin-top: 0;
+  margin-bottom: 0.4rem;
+  font-size: 1.8rem;
+  font-family: 'Cascadia Mono', monospace;
+  font-weight: 600;
+  font-variant: small-caps;
+  letter-spacing: 0.02em;
+}
+
+.macro-actions-row {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 1rem;
+  margin-bottom: 4px;
+}
+
+.macro-card pre {
+  white-space: pre-wrap;
+  word-break: break-word;
+  background: none;
+  margin: 0;
+  padding: 0;
+  font-family: inherit;
+  font-size: 0.97em;
+}
+.macro-card code {
+  white-space: pre-wrap;
+  word-break: break-word;
+  font-family: inherit;
+  color: inherit;
+}
+
+.macro-tags {
+  font-size: 0.63em;
+  color: #8fa3b3;
+  font-style: italic;
+  text-align: right;
+  margin-top: 1rem;
+}
+
+.hotkey-recommendation {
+  font-size: 0.9rem;
+  color: #8fa3b3;
+  font-style: italic;
+  margin-left: 1rem;
+  font-weight: 400;
+}
+
+.card-main-content {
+  flex-grow: 1;
+}
+
+@keyframes pulse {
+  0% {
+    box-shadow: 0 0 5px #7fffd4;
+  }
+  50% {
+    box-shadow: 0 0 15px #7fffd4;
+  }
+  100% {
+    box-shadow: 0 0 5px #7fffd4;
+  }
+}
+
+.essential-card {
+  border: 1px solid #7fffd4;
+  animation: pulse 2s infinite;
+}

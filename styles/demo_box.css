@@ -1,0 +1,36 @@
+/* ───── Demo Boxes ───── */
+.demo-box {
+  background: #26282f;
+  border: 1px solid #35373d;
+  padding: 0.7rem 1rem;
+  border-radius: 5px;
+  white-space: pre-wrap;
+  font-size: 15px;
+  box-sizing: border-box;
+  max-width: 100%;
+  color: #f3f6fa;
+  min-height: 2.2em;
+}
+.demo-box.input-box {
+  background: #23252b;
+  color: #f97583;
+  flex: 1 1 0;
+}
+.demo-box.output-box {
+  background: #23252b;
+  color: #7ee787;
+  flex: 1 1 0;
+}
+.wide-box {
+  width: 100%;
+  margin-top: 0;
+  margin-bottom: 0.5rem;
+}
+
+.demo-row {
+  display: flex;
+  flex-direction: row;
+  gap: 0;
+  margin-bottom: 0.5rem;
+  align-items: flex-start;
+}
