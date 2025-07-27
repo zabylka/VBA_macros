@@ -3,57 +3,41 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Word Macro Gallery</title>
-  <link rel="stylesheet" href="style.css">
+  <title>Monitor Macro Gallery</title>
+  <link rel="stylesheet" href="styles/main.css">
+  <link rel="stylesheet" href="styles/demo_box.css">
+  <link rel="stylesheet" href="styles/tags.css">
+  <link rel="stylesheet" href="styles/MacroCard.css">
+  <link rel="stylesheet" href="styles/modal.css">
 </head>
 <body>
-  <h1>🪄 Word Macro Gallery</h1>
 
-  <div class="macro-card">
-    <h2>Normalize Q/A Capitalization</h2>
-    <p class="description">Fixes lowercase letters after Q/A lines in transcripts.</p>
-    <div class="demo-box" id="macro-output-1">
-Q   what happened next?
-A   i didn’t hear anything.
-    </div>
-    <button onclick="runFakeMacro1()">▶ Run Macro</button>
+<video id="video-background" loop>
+  <source src="/media/Bolus.mp4" type="video/mp4">
+</video>
+  <h1>MONITOR MACRO GALLERY</h1>
 
-    <details>
-      <summary>View Macro Code</summary>
-      <pre><code>
-Sub Cleaning_Normalize_QA_Capitalization2()
-    Dim doc As Document
-    Dim searchRange As Range
-    Dim matchRange As Range
-
-    Set doc = ActiveDocument
-    Set searchRange = doc.Content
-
-    With searchRange.Find
-        .ClearFormatting
-        .Text = "^t([QA])^t([a-z])"
-        .Replacement.Text = ""
-        .Forward = True
-        .Wrap = wdFindStop
-        .Format = False
-        .MatchCase = True
-        .MatchWholeWord = False
-        .MatchWildcards = True
-
-        Do While .Execute
-            Set matchRange = doc.Range(Start:=searchRange.Start, End:=searchRange.End)
-            If matchRange.Characters.Count >= 1 Then
-                matchRange.Characters(matchRange.Characters.Count).Text = _
-                    UCase(matchRange.Characters(matchRange.Characters.Count).Text)
-            End If
-            searchRange.Collapse wdCollapseEnd
-        Loop
-    End With
-End Sub
-      </code></pre>
-    </details>
+  <div id="tag-filter" style="margin-bottom:1.5rem;">
+    <strong>Filters:</strong>
+    <button class="tag-btn" data-tag="all">All</button>
+    <button class="tag-btn" data-tag="cleaning">Cleaning</button>
+    <button class="tag-btn" data-tag="case">Case</button>
+    <button class="tag-btn" data-tag="formatting">Formatting</button>
+    <button class="tag-btn" data-tag="examination">Examination</button>
+    <button class="tag-btn" data-tag="hotkey">Hotkey</button>
+    <button class="tag-btn" data-tag="colloquy">Colloquy</button>
+    <button class="tag-btn" data-tag="essential">Essential</button>
+    <button class="tag-btn" data-tag="spacing">Spacing</button>
+    <button class="tag-btn" data-tag="punctuation">Punctuation</button>
+    <button class="tag-btn" data-tag="numerals">Numerals</button>
   </div>
 
-  <script src="script.js"></script>
+  <div id="macro-container"></div>
+
+<script src="scripts/macros.js"></script>
+<script src="scripts/load_macros.js"></script>
+<script src="scripts/main.js"></script>
+<script src="scripts/demo.js"></script>
+<script src="scripts/filter.js"></script>
 </body>
 </html>
