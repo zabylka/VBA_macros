@@ -1,287 +1,276 @@
+// 🌟 Animate header + build macro cards + wire up video + modals + copy stuff
+
 document.addEventListener('DOMContentLoaded', () => {
-  const header = document.querySelector('h1');
-  if (header) {
-    const text = header.textContent;
-    const letters = text.split('');
-    header.innerHTML = '';
-    letters.forEach((letter, index) => {
-      const span = document.createElement('span');
-      span.textContent = letter;
-      span.dataset.index = index; 
-      if (letter === ' ') {
-        span.classList.add('space');
+  const titleEl = document.querySelector('h1')
+  if (titleEl) {
+    const txt = titleEl.textContent
+    const chars = txt.split('')
+    titleEl.innerHTML = ''
+    chars.forEach((ch, i) => {
+      const s = document.createElement('span')
+      s.textContent = ch
+      s.dataset.index = i
+      if (ch === ' ') {
+        s.classList.add('space')
       } else {
-        const randomDuration = Math.random() * 2 + 2; // Slower: 2s to 4s
-        const randomDelay = Math.random() * 3; // More delay
-        span.style.animationDuration = `${randomDuration}s`;
-        span.style.animationDelay = `${randomDelay}s`;
+        const dur = Math.random() * 2 + 2
+        const delay = Math.random() * 3
+        s.style.animationDuration = `${dur}s`
+        s.style.animationDelay = `${delay}s`
       }
-      header.appendChild(span);
-    });
+      titleEl.appendChild(s)
+    })
 
-    const video = document.getElementById('video-background');
-    video.volume = 0.25;
-    let clickCount = 0;
+    const vid = document.getElementById('video-background')
+    vid.volume = 0.25
+    let taps = 0
 
-    video.addEventListener('ended', () => {
-      video.classList.add('fade-out');
-      clickCount = 1; // Reset for next play
-    });
+    vid.addEventListener('ended', () => {
+      vid.classList.add('fade-out')
+      taps = 1
+    })
 
-    header.addEventListener('click', () => {
-      clickCount++;
+    titleEl.addEventListener('click', () => {
+      taps++
 
-      if (clickCount === 1) {
-        const allSpans = header.querySelectorAll('span');
-        const ySpans = Array.from(allSpans).filter(s => s.textContent.toUpperCase() === 'Y');
-        const lastY = ySpans[ySpans.length - 1];
+      if (taps === 1) {
+        const spans = titleEl.querySelectorAll('span')
+        const ySpans = Array.from(spans).filter(s => s.textContent.toUpperCase() === 'Y')
+        const lastY = ySpans[ySpans.length - 1]
 
-        allSpans.forEach(span => {
-          if (span === lastY) {
-            span.classList.add('fallen');
-          } else {
-            span.classList.add('frozen');
-          }
-        });
-      } else if (clickCount === 2) {
-        video.classList.remove('fade-out');
-        video.classList.add('visible');
-        video.play();
-      } else if (clickCount === 3) {
-        video.classList.add('fade-out');
+        spans.forEach(s => {
+          if (s === lastY) s.classList.add('fallen')
+          else s.classList.add('frozen')
+        })
+      } else if (taps === 2) {
+        vid.classList.remove('fade-out')
+        vid.classList.add('visible')
+        vid.play()
+      } else if (taps === 3) {
+        vid.classList.add('fade-out')
         setTimeout(() => {
-          video.pause();
-        }, 1000); // Corresponds to the animation duration
-        clickCount = 1; // Reset for next play
+          vid.pause()
+        }, 1000)
+        taps = 1
       }
-    });
+    })
   }
+})
 
-});
+let sortedMacros
 
-let sortedMacros;
 document.addEventListener('macrosLoaded', () => {
-  const macroContainer = document.getElementById('macro-container');
+  const container = document.getElementById('macro-container')
 
-  const pinnedMacros = macros.filter(m => m.pinned);
-  const otherMacros = macros.filter(m => !m.pinned);
-  pinnedMacros.sort((a, b) => a.title.localeCompare(b.title));
-  otherMacros.sort((a, b) => a.title.localeCompare(b.title));
-  sortedMacros = [...pinnedMacros, ...otherMacros];
+  const pinned = macros.filter(m => m.pinned)
+  const rest = macros.filter(m => !m.pinned)
+  pinned.sort((a, b) => a.title.localeCompare(b.title))
+  rest.sort((a, b) => a.title.localeCompare(b.title))
+  sortedMacros = [...pinned, ...rest]
 
-  sortedMacros.forEach((macro, index) => {
-    const card = document.createElement('div');
-    card.className = 'macro-card';
-    if (macro.pinned) {
-      card.classList.add('essential-card');
-    }
-    card.dataset.tags = macro.tags.join(' ');
+  sortedMacros.forEach((m, i) => {
+    const card = document.createElement('div')
+    card.className = 'macro-card'
+    if (m.pinned) card.classList.add('essential-card')
+    card.dataset.tags = m.tags.join(' ')
 
-    const mainContent = document.createElement('div');
-    mainContent.className = 'card-main-content';
+    const main = document.createElement('div')
+    main.className = 'card-main-content'
 
-    const title = document.createElement('h2');
-    title.textContent = macro.title;
+    const title = document.createElement('h2')
+    title.textContent = m.title
 
-    if (macro.hotkey) {
-      const hotkeySpan = document.createElement('span');
-      hotkeySpan.className = 'hotkey-recommendation';
-      hotkeySpan.textContent = macro.hotkey;
-      title.appendChild(hotkeySpan);
-    }
-    
-    mainContent.appendChild(title);
-
-    if (macro.description) {
-      const description = document.createElement('p');
-      description.className = 'description';
-      description.textContent = macro.description;
-      mainContent.appendChild(description);
-    }
-    
-    if (macro.input) {
-      const demoRow = document.createElement('div');
-      demoRow.className = 'demo-row';
-
-    const inputBox = document.createElement('div');
-    inputBox.className = 'demo-box input-box';
-    inputBox.id = `macro-input-${index + 1}`;
-    inputBox.textContent = macro.input;
-    demoRow.appendChild(inputBox);
-
-    const outputBox = document.createElement('div');
-    outputBox.className = 'demo-box output-box';
-    outputBox.id = `macro-output-${index + 1}`;
-    outputBox.innerHTML = macro.output;
-    demoRow.appendChild(outputBox);
-
-    mainContent.appendChild(demoRow);
+    if (m.hotkey) {
+      const hk = document.createElement('span')
+      hk.className = 'hotkey-recommendation'
+      hk.textContent = m.hotkey
+      title.appendChild(hk)
     }
 
-    if (macro.input || macro.wide_box_text) {
-      const wideBox = document.createElement('div');
-      wideBox.className = 'demo-box wide-box';
-      wideBox.id = `macro-wide-${index + 1}`;
-      if (macro.input) {
-        wideBox.textContent = macro.input;
-      } else if (macro.wide_box_text) {
-        wideBox.textContent = macro.wide_box_text;
-      }
-      mainContent.appendChild(wideBox);
+    main.appendChild(title)
+
+    if (m.description) {
+      const desc = document.createElement('p')
+      desc.className = 'description'
+      desc.textContent = m.description
+      main.appendChild(desc)
     }
 
-    card.appendChild(mainContent);
+    if (m.input) {
+      const row = document.createElement('div')
+      row.className = 'demo-row'
 
-    const actionsRow = document.createElement('div');
-    actionsRow.className = 'macro-actions-row';
+      const input = document.createElement('div')
+      input.className = 'demo-box input-box'
+      input.id = `macro-input-${i + 1}`
+      input.textContent = m.input
+      row.appendChild(input)
 
-    const buttonsDiv = document.createElement('div');
-    if (macro.input || macro.wide_box_text) {
-      const runButton = document.createElement('button');
-      runButton.id = `run-btn-${index + 1}`;
-      runButton.className = 'btn-outline';
-      runButton.textContent = '➜ Run';
-      runButton.setAttribute('onclick', `runMacro(${index})`);
-      buttonsDiv.appendChild(runButton);
+      const out = document.createElement('div')
+      out.className = 'demo-box output-box'
+      out.id = `macro-output-${i + 1}`
+      out.innerHTML = m.output
+      row.appendChild(out)
 
-      const revertButton = document.createElement('button');
-      revertButton.id = `revert-btn-${index + 1}`;
-      revertButton.className = 'btn-outline';
-      revertButton.textContent = '↩';
-      revertButton.setAttribute('onclick', `revertMacro(${index})`);
-      buttonsDiv.appendChild(revertButton);
+      main.appendChild(row)
     }
 
-    const showCodeButton = document.createElement('button');
-    showCodeButton.className = 'btn-outline';
-    showCodeButton.textContent = 'Show Code';
-    showCodeButton.setAttribute('onclick', `showCodeModal(this)`);
-    buttonsDiv.appendChild(showCodeButton);
+    if (m.input || m.wide_box_text) {
+      const wide = document.createElement('div')
+      wide.className = 'demo-box wide-box'
+      wide.id = `macro-wide-${i + 1}`
+      wide.textContent = m.input || m.wide_box_text
+      main.appendChild(wide)
+    }
 
-    const copyButton = document.createElement('button');
-    copyButton.className = 'btn-outline';
-    copyButton.textContent = 'Copy';
-    copyButton.setAttribute('onclick', `copyCode(this)`);
-    buttonsDiv.appendChild(copyButton);
+    card.appendChild(main)
 
-    actionsRow.appendChild(buttonsDiv);
+    const actions = document.createElement('div')
+    actions.className = 'macro-actions-row'
 
-    
+    const btnWrap = document.createElement('div')
 
-    const codeContainer = document.createElement('div');
-    codeContainer.style.display = 'none';
-    const codeEl = document.createElement('code');
-    codeEl.textContent = macro.code.trim();
-    codeContainer.appendChild(codeEl);
-    card.appendChild(codeContainer);
+    if (m.input || m.wide_box_text) {
+      const runBtn = document.createElement('button')
+      runBtn.id = `run-btn-${i + 1}`
+      runBtn.className = 'btn-outline'
+      runBtn.textContent = '➜ Run'
+      runBtn.setAttribute('onclick', `runMacro(${i})`)
+      btnWrap.appendChild(runBtn)
 
-    const tagsDiv = document.createElement('div');
-    tagsDiv.className = 'macro-tags';
-    tagsDiv.textContent = macro.tags.map(t => t.charAt(0).toUpperCase() + t.slice(1)).join(', ');
-    card.appendChild(tagsDiv);
+      const revertBtn = document.createElement('button')
+      revertBtn.id = `revert-btn-${i + 1}`
+      revertBtn.className = 'btn-outline'
+      revertBtn.textContent = '↩'
+      revertBtn.setAttribute('onclick', `revertMacro(${i})`)
+      btnWrap.appendChild(revertBtn)
+    }
 
-    card.appendChild(actionsRow);
+    const showBtn = document.createElement('button')
+    showBtn.className = 'btn-outline'
+    showBtn.textContent = 'Show Code'
+    showBtn.setAttribute('onclick', `showCodeModal(this)`)
+    btnWrap.appendChild(showBtn)
 
-    macroContainer.appendChild(card);
-  });
+    const copyBtn = document.createElement('button')
+    copyBtn.className = 'btn-outline'
+    copyBtn.textContent = 'Copy'
+    copyBtn.setAttribute('onclick', `copyCode(this)`)
+    btnWrap.appendChild(copyBtn)
 
-  document.querySelectorAll('.macro-card').forEach(c => c.classList.add('show'));
-  document.dispatchEvent(new Event('macrosRendered'));
-  
-  adjustFontSizes();
-});
+    actions.appendChild(btnWrap)
+
+    const codeWrap = document.createElement('div')
+    codeWrap.style.display = 'none'
+    const codeEl = document.createElement('code')
+    codeEl.textContent = m.code.trim()
+    codeWrap.appendChild(codeEl)
+    card.appendChild(codeWrap)
+
+    const tagBox = document.createElement('div')
+    tagBox.className = 'macro-tags'
+    tagBox.textContent = m.tags.map(t => t.charAt(0).toUpperCase() + t.slice(1)).join(', ')
+    card.appendChild(tagBox)
+
+    card.appendChild(actions)
+    container.appendChild(card)
+  })
+
+  document.querySelectorAll('.macro-card').forEach(c => c.classList.add('show'))
+  document.dispatchEvent(new Event('macrosRendered'))
+
+  adjustFontSizes()
+})
 
 function adjustFontSizes() {
-  const titles = document.querySelectorAll('.macro-card h2');
+  const titles = document.querySelectorAll('.macro-card h2')
   titles.forEach(title => {
-    const card = title.closest('.macro-card');
-    let fontSize = parseFloat(window.getComputedStyle(title, null).getPropertyValue('font-size'));
-    while (title.scrollWidth > card.clientWidth - 20) { // 20px for padding
-      fontSize -= 1;
-      title.style.fontSize = `${fontSize}px`;
+    const card = title.closest('.macro-card')
+    let size = parseFloat(window.getComputedStyle(title).getPropertyValue('font-size'))
+    while (title.scrollWidth > card.clientWidth - 20) {
+      size -= 1
+      title.style.fontSize = `${size}px`
     }
-  });
+  })
 }
 
 function showCodeModal(btn) {
-  const card = btn.closest('.macro-card');
-  if (!card) return;
-  const code = card.querySelector('code').textContent;
+  const card = btn.closest('.macro-card')
+  if (!card) return
+  const code = card.querySelector('code').textContent
 
-  const modalOverlay = document.createElement('div');
-  modalOverlay.className = 'modal-overlay';
+  const overlay = document.createElement('div')
+  overlay.className = 'modal-overlay'
 
-  const modalContent = document.createElement('div');
-  modalContent.className = 'modal-content';
+  const modal = document.createElement('div')
+  modal.className = 'modal-content'
 
-  const closeButton = document.createElement('button');
-  closeButton.className = 'modal-close';
-  closeButton.innerHTML = '&times;';
-  closeButton.onclick = () => document.body.removeChild(modalOverlay);
+  const close = document.createElement('button')
+  close.className = 'modal-close'
+  close.innerHTML = '&times;'
+  close.onclick = () => document.body.removeChild(overlay)
 
-  const pre = document.createElement('pre');
-  const codeEl = document.createElement('code');
-  codeEl.textContent = code;
-  pre.appendChild(codeEl);
+  const pre = document.createElement('pre')
+  const codeEl = document.createElement('code')
+  codeEl.textContent = code
+  pre.appendChild(codeEl)
 
-  modalContent.appendChild(closeButton);
-  modalContent.appendChild(pre);
-  modalOverlay.appendChild(modalContent);
+  modal.appendChild(close)
+  modal.appendChild(pre)
+  overlay.appendChild(modal)
 
-  modalOverlay.onclick = (e) => {
-    if (e.target === modalOverlay) {
-      document.body.removeChild(modalOverlay);
+  overlay.onclick = e => {
+    if (e.target === overlay) {
+      document.body.removeChild(overlay)
     }
-  };
+  }
 
-  document.body.appendChild(modalOverlay);
+  document.body.appendChild(overlay)
 }
 
 function copyCode(btn) {
-    const card = btn.closest('.macro-card');
-    if (!card) return;
-    const codeEl = card.querySelector('code');
-    if (!codeEl) return;
+  const card = btn.closest('.macro-card')
+  if (!card) return
+  const codeEl = card.querySelector('code')
+  if (!codeEl) return
 
-    let text = codeEl.textContent.trim();
+  const text = codeEl.textContent.trim()
 
-    if (navigator.clipboard && navigator.clipboard.writeText) {
-        navigator.clipboard.writeText(text).then(() => {
-            btn.textContent = 'Copied!';
-            setTimeout(() => { btn.textContent = 'Copy'; }, 1200);
-        }).catch(err => {
-            console.error('Failed to copy with clipboard API: ', err);
-            copyTextFallback(text, btn);
-        });
-    } else {
-        copyTextFallback(text, btn);
-    }
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(text).then(() => {
+      btn.textContent = 'Copied!'
+      setTimeout(() => { btn.textContent = 'Copy' }, 1200)
+    }).catch(err => {
+      console.error('clipboard failed, trying fallback:', err)
+      copyTextFallback(text, btn)
+    })
+  } else {
+    copyTextFallback(text, btn)
+  }
 }
 
 function copyTextFallback(text, btn) {
-  const textArea = document.createElement('textarea');
-  textArea.value = text;
+  const ta = document.createElement('textarea')
+  ta.value = text
+  ta.style.position = 'fixed'
+  ta.style.left = '-9999px'
+  ta.style.top = '-9999px'
+  document.body.appendChild(ta)
 
-  // hide text area
-  textArea.style.position = 'fixed';
-  textArea.style.left = '-9999px';
-  textArea.style.top = '-9999px';
-  document.body.appendChild(textArea);
-
-  textArea.focus();
-  textArea.select();
+  ta.focus()
+  ta.select()
 
   try {
-    const successful = document.execCommand('copy');
-    if (successful) {
-      btn.textContent = 'Copied!';
-      setTimeout(() => { btn.textContent = 'Copy'; }, 1200);
+    const success = document.execCommand('copy')
+    if (success) {
+      btn.textContent = 'Copied!'
+      setTimeout(() => { btn.textContent = 'Copy' }, 1200)
     } else {
-      console.error('Fallback: Unable to copy');
+      console.error('no luck with execCommand copy')
     }
   } catch (err) {
-    console.error('Fallback: Error copying text', err);
+    console.error('Fallback copy crashed', err)
   }
 
-  document.body.removeChild(textArea);
+  document.body.removeChild(ta)
 }
