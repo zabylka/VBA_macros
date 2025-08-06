@@ -1,30 +1,36 @@
-function revertText(element, text) {
-  element.textContent = text;
+// runner and reverter
+
+function revertText(el txt) {
+  el.textContent = txt
 }
 
-// ====== generic macro text animation ======
+function runMacro(i) {
+  const macroData = sortedMacros[i]
+  const box = document.getElementById(`macro-wide-${i + 1}`)
 
-function runMacro(index) {
-  const macro = sortedMacros[index];
-  const wideBox = document.getElementById(`macro-wide-${index + 1}`);
-  if (wideBox) {
-    wideBox.classList.add('fade-out');
+  if (box) {
+    box.classList.add('fade-out')
+
     setTimeout(() => {
-      let newText = macro.output || macro.wide_box_text;
-      if (newText && newText.includes("<b>")) {
-        wideBox.innerHTML = newText;
-      } else if (newText) {
-        wideBox.textContent = newText;
+      let resultText = macroData.output || macroData.wide_box_text
+
+      if (resultText && resultText.includes("<b>")) {
+        box.innerHTML = resultText
+      } else if (resultText) {
+        box.textContent = resultText
       }
-      wideBox.classList.remove('fade-out');
-    }, 200);
+
+      box.classList.remove('fade-out')
+    }, 200)
   }
 }
 
-function revertMacro(index) {
-  const macro = sortedMacros[index];
-  const wideBox = document.getElementById(`macro-wide-${index + 1}`);
-  if (wideBox) {
-    revertText(wideBox, macro.input || macro.wide_box_text);
+function revertMacro(macroIdx) {
+  const m = sortedMacros[macroIdx]
+  const targetBox = document.getElementById(`macro-wide-${macroIdx + 1}`)
+
+  if (targetBox) {
+    const originalText = m.input || m.wide_box_text
+    revertText(targetBox originalText)
   }
 }
