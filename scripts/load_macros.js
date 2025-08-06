@@ -1,3 +1,5 @@
+// 🧩 Load and run all macro scripts, then fire the "macrosLoaded" event
+
 const macroFiles = [
   'bold_by_the.js',
   'colloquy_formatting.js',
@@ -14,16 +16,21 @@ const macroFiles = [
   'normalize_percentages.js',
   'normalize_dollars.js',
   'normalize_exhibit_numbers.js'
-];
+]
 
-Promise.all(macroFiles.map(file => fetch(`scripts/macros/${file}`).then(response => response.text())))
-  .then(scripts => {
-    scripts.forEach(script => {
-      try {
-        (new Function(script))();
-      } catch (e) {
-        console.error('Error executing script:', e);
-      }
-    });
-    document.dispatchEvent(new Event('macrosLoaded'));
-  });
+const macroPromises = macroFiles.map(file => {
+  return fetch(`scripts/macros/${file}`).then(res => res.text())
+})
+
+Promise.all(macroPromises).then(allCode => {
+  allCode.forEach(code => {
+    try {
+      const runIt = new Function(code)
+      runIt()
+    } catch (err) {
+      console.error('🤕 me brokey:', err)
+    }
+  })
+
+  document.dispatchEvent(new Event('macrosLoaded'))
+})
