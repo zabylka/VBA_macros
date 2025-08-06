@@ -1,5 +1,5 @@
 // runner and reverter
-function revertText(el txt) {
+function revertText(el, txt) {
   el.textContent = txt
 }
 
@@ -30,6 +30,6 @@ function revertMacro(i) {
 
   if (box) {
     const originalTxt = m.input || m.wide_box_text
-    revertText(box originalTxt)
+revertText(box, originalTxt)
   }
 }
